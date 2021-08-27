@@ -5,9 +5,10 @@ using UnityEngine;
 public class PlayerService : MonoSingletonGeneric<PlayerService>
 {
     public PlayerScriptableObject playerSO;
-    // public PlayerScriptableObject playerSO { get; private set; }
     private PlayerController playerController;
     private PlayerModel playerModel;
+
+
 
     void Start()
     {
@@ -20,13 +21,13 @@ public class PlayerService : MonoSingletonGeneric<PlayerService>
         playerController = new PlayerController(playerModel, playerSO.playerView);
     }
 
-    public PlayerModel GetPlayerModel()
-    {
-        return playerModel;
-    }
-    public PlayerController GetPlayerController()
-    {
-        return playerController;
-    }
+    // public PlayerModel GetPlayerModel()
+    // {
+    //     return playerModel;
+    // }
+    // public PlayerController GetPlayerController()
+    // {
+    //     return playerController;
+    // }
 
 }
