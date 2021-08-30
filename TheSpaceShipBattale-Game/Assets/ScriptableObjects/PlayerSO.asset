@@ -15,5 +15,5 @@ MonoBehaviour:
   playerView: {fileID: 6054707091251619241, guid: e26d39968250ff04fa793905e045facb,
     type: 3}
   speed: 20
-  health: 20
+  health: 100
   fireRate: 0.05

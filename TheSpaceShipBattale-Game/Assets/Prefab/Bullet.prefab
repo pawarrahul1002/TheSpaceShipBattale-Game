@@ -94,7 +94,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: -0.00000014901161, y: 0.0015376061}
@@ -143,6 +143,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6f75fca9913b5840a2b0d55a2fc3541, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 6
-  deactivateTimer: 3
-  isEnemyBullet: 0
+  m_MaxLifeTime: 1
+  explsionAnim: {fileID: 0}

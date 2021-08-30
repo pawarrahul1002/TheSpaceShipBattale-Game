@@ -2,142 +2,108 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController
+
+namespace BattleOfMidWay
 {
-    public float max_X = 7f;
-    public float max_Y = -7f;
-    public PlayerModel playerModel { get; private set; }
-    public PlayerView playerView { get; private set; }
-
-    public PlayerController(PlayerModel playerModel, PlayerView playerView)
+    //PlayerController : controll and instantiate player prefab with model and view
+    public class PlayerController
     {
-        this.playerModel = playerModel;
-        this.playerView = GameObject.Instantiate<PlayerView>(playerView, new Vector3(0f, -5f, 0f), Quaternion.identity);
-        this.playerView.SetPlayerController(this);
-    }
+        public PlayerModel playerModel { get; private set; }
+        public PlayerView playerView { get; private set; }
+        private float maxX_PlayerPos = 4f;
+        private float maxY_PlayerPos = -7f;
 
-
-    public void MovePlayer(float x, float y)
-    {
-        Vector3 moveDir = new Vector3(x, y).normalized;
-
-        Vector3 playerPos = playerView.transform.position;
-
-        playerPos += moveDir * playerModel.movementSpeed * Time.deltaTime;
-
-        if (playerPos.x < max_X && x > 0)
+        public PlayerController(PlayerModel playerModel, PlayerView playerView)
         {
-            playerView.transform.position = new Vector2(playerPos.x, playerView.transform.position.y);
+            this.playerModel = playerModel;
+            this.playerView = GameObject.Instantiate<PlayerView>(playerView, new Vector3(0f, -5f, 0f), Quaternion.identity);
+            this.playerView.SetPlayerController(this);
         }
-        else if (playerPos.x > -max_X && x < 0)
+
+        //MovePlayer :  moves player if diffrent direction with constarints in  x and y axis at some pos
+        public void MovePlayer(float xInput, float yInput)
         {
-            playerView.transform.position = new Vector2(playerPos.x, playerView.transform.position.y);
+            Vector3 moveDir = new Vector3(xInput, yInput).normalized;
+
+            Vector3 playerPos = playerView.transform.position;
+
+            playerPos += moveDir * playerModel.movementSpeed * Time.deltaTime;
+
+            playerPos.x = Mathf.Clamp(playerPos.x, -maxX_PlayerPos, maxX_PlayerPos);
+
+            playerPos.y = Mathf.Clamp(playerPos.y, maxY_PlayerPos, 0);
+
+            playerView.transform.position = new Vector2(playerPos.x, playerPos.y);
+
         }
-        else if (playerPos.y < 0 && y > 0)
+
+        //ShootBullet:  this is for creating instance and bullet for player
+        public void ShootBullet()
         {
-            playerView.transform.position = new Vector2(playerView.transform.position.x, playerPos.y);
+            BulletServices.instance.CreateBullet(GetFiringPosition(), GetFiringAngle(), GetBullet());
         }
-        else if (playerPos.y > max_Y && y < 0)
+
+        //getting fire point position from player view
+        public Transform[] GetFiringPosition()
         {
-            playerView.transform.position = new Vector2(playerView.transform.position.x, playerPos.y);
+            return playerView.firePoint;
         }
-    }
+
+        //getting firing angle from player view
+        public Quaternion GetFiringAngle()
+        {
+            return playerView.transform.rotation;
+        }
+
+        //getting bullet type from bullet scripatble object
+        public BulletScriptableObject GetBullet()
+        {
+            return playerView.bullet;
+        }
 
 
-    public void ShootBullet()
-    {
-        BulletServices.instance.CreateBullet(GetFiringPosition(), GetFiringAngle(), GetBullet());
-    }
+        //PowerUpHealth :  this function is called when player toches power ups
+        public void PowerUpHealth()
+        {
+            playerModel.health += 50;
+            ScoreController.instance.UpdateHealthText(playerModel.health);
+        }
 
-    // public Vector3 GetFiringPosition()
-    // {
-    //     return playerView.firePoint.position;
-    // }
-    public Transform[] GetFiringPosition()
-    {
-        return playerView.firePoint;
-    }
-    public Quaternion GetFiringAngle()
-    {
-        return playerView.transform.rotation;
-    }
-    public BulletScriptableObject GetBullet()
-    {
-        return playerView.bullet;
+        //ApplyDamage : reduces health of player in this function, use when player touches bullet
+        public void ApplyDamage(int damage)
+        {
+            if (playerModel != null)
+            {
+                if (playerModel.health > 0)
+                {
+                    ScoreController.instance.UpdateHealthText(playerModel.health);
+                    playerModel.health -= damage;
+                }
+                else
+                {
+                    ScoreController.instance.UpdateHealthText(0);
+                    ScoreController.instance.ActiveGameOverPanel();
+                    Dead();
+                }
+            }
+        }
+
+
+        //dead : this fuc is called when player health is low or player toches enemy or asteroid
+        private void Dead()
+        {
+            PlayerService.instance.DestroyPlayer(this);
+        }
+
+
+        //this is good prectice to assign null before destroy
+        public void DestroyController()
+        {
+            playerModel.DestroyModel();
+            playerView.DestroyView();
+            playerModel = null;
+            playerView = null;
+        }
     }
 
 }
-
-
-
-// [Header("Ship Speed")]
-
-// public float _moveSpeed;
-// // private PlayerInputActions _playerInput;
-// private Rigidbody2D _rb;
-
-// public bool _canMove;
-
-// void Awake()
-// {
-//     _canMove = true;
-//     // _playerInput = new PlayerInputActions();
-//     _rb = GetComponent<Rigidbody2D>();
-// }
-// // Disable and Enable
-// private void OnEnable()
-// {
-//     // _playerInput.Enable();    
-// }
-
-// private void OnDisable()
-// {
-//     // _playerInput.Disable();
-// }
-// // Topdown Movement System
-// void FixedUpdate()
-// {
-
-//     if (!_canMove)
-//     {
-//         _rb.velocity = new Vector2(0, 0);
-
-//     }
-
-//     if (_canMove)
-//     {
-//         // Vector2 _moveInput = _playerInput.Movement.Move.ReadValue<Vector2>();
-//         // _rb.velocity = _moveInput * _moveSpeed;
-//     }
-// }
-// }
-
-
-
-// Debug.Log(moveDir);
-// Vector3 playerPos = playerView.transform.position;
-
-// playerPos += moveDir * playerModel.movementSpeed * Time.deltaTime;
-
-
-// if (playerPos.x < 10f)
-// {
-//     playerPos += moveDir * playerModel.movementSpeed * Time.deltaTime;
-// }
-
-// if (playerView.transform.position.x > -10f && playerView.transform.position.x < 10f
-//         && playerView.transform.position.y > -10f && playerView.transform.position.y < 10f)
-// if (playerPos.x < 10f)
-// {
-// }
-
-
-
-// Vector3 move = playerView.transform.transform.position;
-// move.x += playerView.transform.position.x * X_Input * Time.fixedDeltaTime;
-// rgbd2d.MovePosition(move);
-// Vector3 temp = playerView.transform.position;
-// Debug.Log(X_Input);
-// // playerView.transform.position += temp * 25f * Time.deltaTime;
-// if (x > 0f && )
-// {

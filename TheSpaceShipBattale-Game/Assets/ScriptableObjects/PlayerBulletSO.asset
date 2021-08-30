@@ -10,9 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 30a9dfbd52577d1479bae3b717b80b2f, type: 3}
-  m_Name: BulletSO
+  m_Name: PlayerBulletSO
   m_EditorClassIdentifier: 
   bulletView: {fileID: 1861220489341008697, guid: 51e88129b6b9e2445910eabe7733d983,
     type: 3}
-  bulletForce: 15
+  bulletType: 1
+  bulletForce: 10
   bulletDamage: 10

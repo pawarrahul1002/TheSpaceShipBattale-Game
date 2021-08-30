@@ -2,62 +2,73 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BulletView : MonoBehaviour
+
+namespace BattleOfMidWay
 {
-    public BulletController bulletController { get; private set; }
-    public ParticleSystem BullectDestroyVFX;
-    public GameObject audioSource;
-    public float m_MaxLifeTime = 1f;
-    public Vector3 dir;
-    public void SetBulletController(BulletController _bulletController)
+    /*bulletview : this is monobeahaviour class attached to bullet prefab*/
+    public class BulletView : MonoBehaviour
     {
-        bulletController = _bulletController;
-    }
+        public BulletController bulletController { get; private set; }
+        public float m_MaxLifeTime = 1f;
+        public GameObject explsionAnim;
 
-    void Start()
-    {
-        Debug.Log(transform.localRotation);
-        dir = (transform.localRotation * Vector2.up);//.normalized
-        Debug.Log(transform.localRotation);
-        // audioSource.transform.parent = null;
-        // Destroy(audioSource, 0.5f);
-        // If it isn't destroyed by obstacles then, destroying after it's lifetime.
-        Destroy(gameObject, m_MaxLifeTime);
-    }
+        //SetBulletController :  use for setting bulletcontroller instance
+        public void SetBulletController(BulletController _bulletController)
+        {
+            bulletController = _bulletController;
+        }
 
-    private void FixedUpdate()
-    {
-        bulletController.Movement(dir);
-    }
 
-    void OnCollisionEnter(Collision other)
-    {
+        void Start()
+        {
+            // If it isn't destroyed by obstacles then, destroying after it's lifetime.
+            Destroy(gameObject, m_MaxLifeTime);
+        }
 
-        // if ((bulletController.bulletModel.type == BulletTypes.EnemyBullet) && other.gameObject.GetComponent<TankView>() != null)
-        // {
-        //     // TankService.GetInstance().GetTankController().ApplyDamage(bulletController.bulletModel.damage);
-        // }
-        // else if ((bulletController.bulletModel.type != BulletTypes.EnemyBullet) && other.gameObject.GetComponent<EnemyView>() != null)
-        // {
+        /*in Fixed update movemnt of bullet is running by the instance of bullet controller,
+         bullet movement function in the bullet controller*/
+        private void FixedUpdate()
+        {
+            bulletController.Movement();
+        }
 
-        //     // other.gameObject.GetComponent<EnemyView>().enemyController.ApplyDamage(bulletController.bulletModel.damage);
-        // }
 
-        DestroyBullets();
+        /*OnTriggerEnter2D : this is checking for collision of bullet with enemy, player, and asteroids
+            we set ontrigger checked of box collider to use this fun*/
+        void OnTriggerEnter2D(Collider2D other)
+        {
+            if ((bulletController.bulletModel.bulletType == BulletType.Enemy) && other.gameObject.GetComponent<PlayerView>() != null)
+            {
+                PlayerService.instance.GetPlayerController().ApplyDamage(10);
+            }
+            else if ((bulletController.bulletModel.bulletType == BulletType.player) && (other.CompareTag("Enemy")))
+            {
 
-    }
+                SoundManager.Instance.Play(Sounds.Explosion);
+                ScoreController.instance.IncreaseScore();
+                ScoreController.instance.EnemyDamage(10, other.gameObject);
+            }
+            else if ((bulletController.bulletModel.bulletType == BulletType.player) && (other.CompareTag("Asteroid")))
+            {
+                SoundManager.Instance.Play(Sounds.Explosion);
+                ScoreController.instance.IncreaseScore();
+                Destroy(other.gameObject);
+            }
 
-    private void DestroyBullets()
-    {
-        // BullectDestroyVFX.transform.parent = null;
-        // BullectDestroyVFX.Play();
-        // Destroy(BullectDestroyVFX.gameObject, BullectDestroyVFX.main.duration);
-        Destroy(gameObject);
+            DestroyBullets();
+
+        }
+
+
+        //bullet is destroying itself 
+        private void DestroyBullets()
+        {
+            Destroy(gameObject);
+        }
+
     }
 
 }
-
-
 
 
 

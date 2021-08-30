@@ -1,20 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public class BulletServices : MonoSingletonGeneric<BulletServices>
+
+
+namespace BattleOfMidWay
 {
-    public void CreateBullet(Transform[] transforms, Quaternion rotation, BulletScriptableObject type)
+
+    /*BulletServices : this class is MonoSingletonGenericand deals with with services*/
+    public class BulletServices : MonoSingletonGeneric<BulletServices>
     {
-        BulletScriptableObject bullet = type;
-        BulletModel bulletModel = new BulletModel(bullet);
-        // for (int i = 0; i < position.Length; i++)
-        // {
-        // BulletController bulletController = new BulletController(bullet.bulletView, bulletModel, position, rotation);
-        // }
-        for (int i = 0; i < transforms.Length; i++)
+        public void CreateBullet(Transform[] transforms, Quaternion rotation, BulletScriptableObject type)
         {
-            // Debug.Log(transforms[].position);
-            BulletController bulletController = new BulletController(bullet.bulletView, bulletModel, transforms[i].position, rotation);
+            BulletScriptableObject bullet = type;
+            BulletModel bulletModel = new BulletModel(bullet);
+            for (int i = 0; i < transforms.Length; i++)
+            {
+                BulletController bulletController = new BulletController(bullet.bulletView, bulletModel, transforms[i].position, rotation);
+            }
         }
     }
 }

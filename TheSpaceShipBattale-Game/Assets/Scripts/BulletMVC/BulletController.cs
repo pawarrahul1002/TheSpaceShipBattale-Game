@@ -2,48 +2,40 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BulletController
+namespace BattleOfMidWay
 {
-    public BulletView bulletView { get; private set; }
-    public BulletModel bulletModel { get; private set; }
-    private Rigidbody2D rigidbody2d;
-    public BulletController(BulletView _bulletView, BulletModel _bulletModel, Vector3 position, Quaternion rotation)
+
+    /*BulletController : this controller we used to instatiate bullet using constructor also
+        we have movement script in it */
+
+    public class BulletController
     {
-        this.bulletModel = _bulletModel;
-        this.bulletView = GameObject.Instantiate<BulletView>(_bulletView, position, Quaternion.Euler(0f, 0f, 90f));
-        this.bulletView.SetBulletController(this);
-        this.bulletModel.SetBulletController(this);
-        this.rigidbody2d = bulletView.GetComponent<Rigidbody2D>();
+        public BulletView bulletView { get; private set; }
+        public BulletModel bulletModel { get; private set; }
+        private Rigidbody2D rigidbody2d;
+        public BulletController(BulletView _bulletView, BulletModel _bulletModel, Vector3 position, Quaternion rotation)
+        {
+            this.bulletModel = _bulletModel;
+            this.bulletView = GameObject.Instantiate<BulletView>(_bulletView, position, Quaternion.Euler(0f, 0f, 90f));
+            this.bulletView.SetBulletController(this);
+            this.bulletModel.SetBulletController(this);
+            this.rigidbody2d = bulletView.GetComponent<Rigidbody2D>();
+            SoundManager.Instance.Play(Sounds.Laser);
+        }
+
+
+        //movement : this fun is for giving force to bullet after instatiate for both player and enemy in up and down dir
+        public void Movement()
+        {
+            if (this.bulletModel.bulletType == BulletType.player)
+            {
+                bulletView.transform.Translate(Vector2.right * bulletModel.bulletForce * Time.deltaTime);
+            }
+            else if (this.bulletModel.bulletType == BulletType.Enemy)
+            {
+                bulletView.transform.Translate(Vector2.left * bulletModel.bulletForce * Time.deltaTime);
+            }
+        }
     }
-
-    // public void Movement()
-    // {
-    //     rigidbody2d.AddForce(bulletView.transform.up * bulletModel.bulletForce, ForceMode2D.Impulse);
-
-    //     // Vector3 move = bulletView.transform.transform.position;
-    //     // move += bulletView.transform.forward * bulletModel.bulletForce * Time.fixedDeltaTime;
-
-    //     // rigidbody2d.MovePosition(move);
-    // }
-
-    // public void Movement(Vector3 dir)
-    // {
-    //     Vector3 position = bulletView.transform.position;
-    //     position.y += bulletModel.bulletForce * Time.deltaTime;
-    //     bulletView.transform.position = position;
-    // }
-    public void Movement(Vector3 dir)
-    {
-        // dir = new Vector3(0f, 0f, 1f, 1f);
-        Vector3 bulletPos = bulletView.transform.position;
-
-        bulletPos += dir * bulletModel.bulletForce * Time.deltaTime;
-        // Vector3 position = bulletView.transform.position;
-        bulletView.transform.position = new Vector2(bulletPos.x, bulletPos.y);
-        // bulletView.transform.position = position;
-    }
-
-
-
 
 }

@@ -2,33 +2,37 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BackgroundScroller : MonoBehaviour
+
+
+namespace BattleOfMidWay
 {
-    private float scrollSpeed = 4f;
-    private float maxDownDistance = -20f;
-    private Vector3 startPos;
-
-    void Start()
+    /*BackgroundScroller : we change the position of background to previous position for getting infite 
+                            background effect*/
+    public class BackgroundScroller : MonoBehaviour
     {
-        startPos = transform.position;
-    }
+        private float scrollSpeed = 10f;
+        private float maxDownDistance = -20f;
+        private Vector3 startPos;
 
-    void Update()
-    {
-        BGScrolling();
-    }
-
-
-    /*BGScrolling : moving bg down with Translate and taking tranform to startPos after Max down distance */
-
-    void BGScrolling()
-    {
-        transform.Translate(Vector3.down * scrollSpeed * Time.deltaTime);
-        if (transform.position.y < maxDownDistance)
+        void Start()
         {
-            transform.position = startPos;
+            startPos = transform.position;
+        }
+
+        void Update()
+        {
+            BGScrolling();
+        }
+
+
+        /*BGScrolling : moving bg down with Translate and taking tranform to startPos after Max down distance */
+        void BGScrolling()
+        {
+            transform.Translate(Vector3.down * scrollSpeed * Time.deltaTime);
+            if (transform.position.y < maxDownDistance)
+            {
+                transform.position = startPos;
+            }
         }
     }
-
-
 }
